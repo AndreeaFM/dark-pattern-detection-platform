@@ -4,16 +4,33 @@ function Results() {
   const location = useLocation()
   const analysis = location.state?.analysis
 
+  const formatPatternType = (type) => {
+    switch (type) {
+      case 'confirmshaming':
+        return 'Confirmshaming'
+      case 'urgency':
+        return 'Urgency'
+      case 'scarcity':
+        return 'Scarcity'
+      case 'forcedAction':
+        return 'Forced Action'
+      default:
+        return type
+    }
+  }
+
   if (!analysis) {
     return (
       <div className="p-8">
         <h2 className="text-2xl font-bold mb-4">No analysis data found</h2>
         <Link to="/analyze-url" className="text-blue-600 underline">
-          Go back to Analyze URL
+          Go back to analysis
         </Link>
       </div>
     )
   }
+
+  const isScreenshot = analysis.inputType === 'screenshot'
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -24,10 +41,23 @@ function Results() {
           <span className="font-semibold">Input type:</span>{' '}
           {analysis.inputType}
         </p>
-        <p className="mb-2 break-all">
-          <span className="font-semibold">Input value:</span>{' '}
-          {analysis.inputValue}
-        </p>
+
+        {isScreenshot ? (
+          <div className="mb-4">
+            <p className="font-semibold mb-2">Uploaded screenshot:</p>
+            <img
+              src={`http://localhost:5000/${analysis.inputValue}`}
+              alt="Uploaded screenshot"
+              className="max-h-96 rounded-lg border"
+            />
+          </div>
+        ) : (
+          <p className="mb-2 break-all">
+            <span className="font-semibold">Input value:</span>{' '}
+            {analysis.inputValue}
+          </p>
+        )}
+
         <p className="mb-2">
           <span className="font-semibold">Risk score:</span>{' '}
           {analysis.riskScore}/100
@@ -35,6 +65,13 @@ function Results() {
         <p>
           <span className="font-semibold">Risk level:</span>{' '}
           {analysis.riskLevel}
+        </p>
+      </div>
+
+      <div className="bg-white shadow rounded-xl p-6 mb-6">
+        <h2 className="text-2xl font-semibold mb-4">Extracted Text</h2>
+        <p className="text-slate-700 whitespace-pre-wrap">
+          {analysis.extractedText || 'No text extracted.'}
         </p>
       </div>
 
@@ -49,7 +86,7 @@ function Results() {
               <div key={index} className="border rounded-lg p-4">
                 <p className="mb-1">
                   <span className="font-semibold">Pattern type:</span>{' '}
-                  {detection.patternType}
+                  {formatPatternType(detection.patternType)}
                 </p>
                 <p className="mb-1">
                   <span className="font-semibold">Matched text:</span>{' '}
@@ -71,18 +108,5 @@ function Results() {
     </div>
   )
 }
-const formatPatternType = (type) => {
-  switch (type) {
-    case 'confirmshaming':
-      return 'Confirmshaming'
-    case 'urgency':
-      return 'Urgency'
-    case 'scarcity':
-      return 'Scarcity'
-    case 'forcedAction':
-      return 'Forced Action'
-    default:
-      return type
-  }
-}
+
 export default Results

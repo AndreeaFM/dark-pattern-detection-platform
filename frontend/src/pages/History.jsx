@@ -39,10 +39,19 @@ function History() {
                 <span className="font-semibold">Input type:</span>{' '}
                 {item.inputType}
               </p>
-              <p className="mb-1 break-all">
-                <span className="font-semibold">Input value:</span>{' '}
-                {item.inputValue}
-              </p>
+
+              {item.inputType === 'url' ? (
+                <p className="mb-1 break-all">
+                  <span className="font-semibold">Input value:</span>{' '}
+                  {item.inputValue}
+                </p>
+              ) : (
+                <p className="mb-1">
+                  <span className="font-semibold">Screenshot:</span> Uploaded
+                  image
+                </p>
+              )}
+
               <p className="mb-1">
                 <span className="font-semibold">Risk score:</span>{' '}
                 {item.riskScore}/100

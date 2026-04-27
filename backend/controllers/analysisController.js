@@ -1,5 +1,6 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
+const Tesseract = require('tesseract.js')
 const Analysis = require('../models/Analysis')
 const detectPatterns = require('../services/detectionService')
 const calculateRiskScore = require('../services/scoringService')
@@ -36,6 +37,39 @@ exports.analyzeUrl = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: 'Failed to analyze URL',
+      error: error.message,
+    })
+  }
+}
+
+exports.analyzeScreenshot = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Image file is required' })
+    }
+
+    const imagePath = req.file.path
+
+    const result = await Tesseract.recognize(imagePath, 'eng')
+    const extractedText = result.data.text.replace(/\s+/g, ' ').trim()
+
+    const detections = detectPatterns(extractedText)
+    const { score, riskLevel } = calculateRiskScore(detections)
+
+    const analysis = await Analysis.create({
+      userId: req.user.id,
+      inputType: 'screenshot',
+      inputValue: imagePath,
+      extractedText,
+      detections,
+      riskScore: score,
+      riskLevel,
+    })
+
+    res.status(201).json(analysis)
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to analyze screenshot',
       error: error.message,
     })
   }
