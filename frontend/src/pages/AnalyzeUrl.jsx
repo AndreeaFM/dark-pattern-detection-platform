@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import API from '../services/api'
+import PageContainer from '../components/PageContainer'
 
 function AnalyzeUrl() {
   const [url, setUrl] = useState('')
@@ -19,9 +20,7 @@ function AnalyzeUrl() {
 
     try {
       setLoading(true)
-
       const { data } = await API.post('/analysis/url', { url })
-
       navigate('/results', { state: { analysis: data } })
     } catch (error) {
       setError(
@@ -33,13 +32,11 @@ function AnalyzeUrl() {
   }
 
   return (
-    <div className="min-h-[80vh] flex justify-center items-center px-4">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8">
-        <h1 className="text-3xl font-bold mb-4">Analyze URL</h1>
-        <p className="text-slate-600 mb-6">
-          Enter a webpage URL to detect possible dark patterns.
-        </p>
-
+    <PageContainer
+      title="Analyze URL"
+      subtitle="Submit a webpage URL to detect possible dark patterns."
+    >
+      <div className="bg-white shadow rounded-xl p-6 max-w-3xl">
         {error && (
           <div className="bg-red-100 text-red-700 px-4 py-3 rounded mb-4">
             {error}
@@ -60,11 +57,11 @@ function AnalyzeUrl() {
             disabled={loading}
             className="bg-slate-900 text-white px-6 py-3 rounded hover:bg-slate-800"
           >
-            {loading ? 'Analyzing...' : 'Analyze'}
+            {loading ? 'Analyzing...' : 'Analyze URL'}
           </button>
         </form>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

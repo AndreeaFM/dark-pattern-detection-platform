@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import PageContainer from '../components/PageContainer'
 
 function Login() {
   const navigate = useNavigate()
@@ -34,49 +35,51 @@ function Login() {
   }
 
   return (
-    <div className="min-h-[80vh] flex justify-center items-center px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white shadow-lg rounded-xl p-6"
-      >
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
-
-        {error && <p className="text-red-500 mb-3">{error}</p>}
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full border p-3 rounded mb-3"
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full border p-3 rounded mb-4"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-slate-900 text-white py-3 rounded hover:bg-slate-800"
+    <PageContainer>
+      <div className="min-h-[70vh] flex justify-center items-center px-4">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md bg-white shadow-lg rounded-xl p-6"
         >
-          {loading ? 'Signing in...' : 'Login'}
-        </button>
+          <h2 className="text-2xl font-bold mb-4">Login</h2>
 
-        <p className="mt-4 text-sm text-slate-600">
-          Don’t have an account?{' '}
-          <Link to="/register" className="text-blue-600">
-            Register
-          </Link>
-        </p>
-      </form>
-    </div>
+          {error && <p className="text-red-500 mb-3">{error}</p>}
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full border p-3 rounded mb-3"
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full border p-3 rounded mb-4"
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-slate-900 text-white py-3 rounded hover:bg-slate-800"
+          >
+            {loading ? 'Signing in...' : 'Login'}
+          </button>
+
+          <p className="mt-4 text-sm text-slate-600">
+            Don’t have an account?{' '}
+            <Link to="/register" className="text-blue-600">
+              Register
+            </Link>
+          </p>
+        </form>
+      </div>
+    </PageContainer>
   )
 }
 

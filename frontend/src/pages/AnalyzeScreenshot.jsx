@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import API from '../services/api'
+import PageContainer from '../components/PageContainer'
 
 function AnalyzeScreenshot() {
   const [image, setImage] = useState(null)
@@ -48,14 +49,11 @@ function AnalyzeScreenshot() {
   }
 
   return (
-    <div className="min-h-[80vh] flex justify-center items-center px-4">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8">
-        <h1 className="text-3xl font-bold mb-4">Analyze Screenshot</h1>
-        <p className="text-slate-600 mb-6">
-          Upload a screenshot to detect possible dark patterns based on
-          extracted text.
-        </p>
-
+    <PageContainer
+      title="Analyze Screenshot"
+      subtitle="Upload an interface screenshot and analyze extracted text for dark patterns."
+    >
+      <div className="bg-white shadow rounded-xl p-6 max-w-3xl">
         {error && (
           <div className="bg-red-100 text-red-700 px-4 py-3 rounded mb-4">
             {error}
@@ -89,7 +87,7 @@ function AnalyzeScreenshot() {
           </button>
         </form>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

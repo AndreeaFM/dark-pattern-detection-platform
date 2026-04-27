@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import API from '../services/api'
+import PageContainer from '../components/PageContainer'
+import Loader from '../components/Loader'
+import EmptyState from '../components/EmptyState'
+import RiskBadge from '../components/RiskBadge'
 
 function History() {
   const [history, setHistory] = useState([])
@@ -21,58 +25,63 @@ function History() {
     fetchHistory()
   }, [])
 
-  if (loading) {
-    return <div className="p-6">Loading history...</div>
-  }
-
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Analysis History</h1>
-
-      {history.length === 0 ? (
-        <p className="text-slate-600">No saved analyses found.</p>
+    <PageContainer
+      title="Analysis History"
+      subtitle="Review previously saved URL and screenshot analyses."
+    >
+      {loading ? (
+        <Loader text="Loading history..." />
+      ) : history.length === 0 ? (
+        <EmptyState
+          title="No analyses found"
+          description="Run your first analysis to start building history."
+        />
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-4">
           {history.map((item) => (
             <div key={item._id} className="bg-white shadow rounded-xl p-5">
-              <p className="mb-1">
-                <span className="font-semibold">Input type:</span>{' '}
-                {item.inputType}
-              </p>
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                <div className="space-y-2">
+                  <p>
+                    <span className="font-semibold">Input type:</span>{' '}
+                    {item.inputType}
+                  </p>
 
-              {item.inputType === 'url' ? (
-                <p className="mb-1 break-all">
-                  <span className="font-semibold">Input value:</span>{' '}
-                  {item.inputValue}
-                </p>
-              ) : (
-                <p className="mb-1">
-                  <span className="font-semibold">Screenshot:</span> Uploaded
-                  image
-                </p>
-              )}
+                  {item.inputType === 'url' ? (
+                    <p className="break-all">
+                      <span className="font-semibold">Input value:</span>{' '}
+                      {item.inputValue}
+                    </p>
+                  ) : (
+                    <p>
+                      <span className="font-semibold">Screenshot:</span>{' '}
+                      Uploaded image
+                    </p>
+                  )}
 
-              <p className="mb-1">
-                <span className="font-semibold">Risk score:</span>{' '}
-                {item.riskScore}/100
-              </p>
-              <p className="mb-3">
-                <span className="font-semibold">Risk level:</span>{' '}
-                {item.riskLevel}
-              </p>
+                  <p>
+                    <span className="font-semibold">Risk score:</span>{' '}
+                    {item.riskScore}/100
+                  </p>
+                </div>
 
-              <Link
-                to="/results"
-                state={{ analysis: item }}
-                className="text-blue-600 underline"
-              >
-                View details
-              </Link>
+                <div className="flex flex-col items-start md:items-end gap-3">
+                  <RiskBadge level={item.riskLevel} />
+                  <Link
+                    to="/results"
+                    state={{ analysis: item }}
+                    className="text-blue-600 underline"
+                  >
+                    View details
+                  </Link>
+                </div>
+              </div>
             </div>
           ))}
         </div>
       )}
-    </div>
+    </PageContainer>
   )
 }
 

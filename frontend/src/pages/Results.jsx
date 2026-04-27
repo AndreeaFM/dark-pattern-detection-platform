@@ -1,111 +1,80 @@
 import { useLocation, Link } from 'react-router-dom'
+import PageContainer from '../components/PageContainer'
+import RiskScoreCard from '../components/RiskScoreCard'
+import DetectionCard from '../components/DetectionCard'
+import EmptyState from '../components/EmptyState'
 
 function Results() {
   const location = useLocation()
   const analysis = location.state?.analysis
 
-  const formatPatternType = (type) => {
-    switch (type) {
-      case 'confirmshaming':
-        return 'Confirmshaming'
-      case 'urgency':
-        return 'Urgency'
-      case 'scarcity':
-        return 'Scarcity'
-      case 'forcedAction':
-        return 'Forced Action'
-      default:
-        return type
-    }
-  }
-
   if (!analysis) {
     return (
-      <div className="p-8">
-        <h2 className="text-2xl font-bold mb-4">No analysis data found</h2>
-        <Link to="/analyze-url" className="text-blue-600 underline">
-          Go back to analysis
-        </Link>
-      </div>
+      <PageContainer title="Analysis Results">
+        <EmptyState
+          title="No analysis data found"
+          description="Go back and run a new analysis first."
+        />
+        <div className="mt-4">
+          <Link to="/analyze-url" className="text-blue-600 underline">
+            Go back to analysis
+          </Link>
+        </div>
+      </PageContainer>
     )
   }
 
   const isScreenshot = analysis.inputType === 'screenshot'
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Analysis Results</h1>
+    <PageContainer
+      title="Analysis Results"
+      subtitle="Detected dark patterns and manipulation risk assessment."
+    >
+      <div className="grid gap-6">
+        <RiskScoreCard
+          inputType={analysis.inputType}
+          inputValue={analysis.inputValue}
+          riskScore={analysis.riskScore}
+          riskLevel={analysis.riskLevel}
+        />
 
-      <div className="bg-white shadow rounded-xl p-6 mb-6">
-        <p className="mb-2">
-          <span className="font-semibold">Input type:</span>{' '}
-          {analysis.inputType}
-        </p>
-
-        {isScreenshot ? (
-          <div className="mb-4">
-            <p className="font-semibold mb-2">Uploaded screenshot:</p>
+        {isScreenshot && (
+          <div className="bg-white shadow rounded-xl p-6">
+            <h2 className="text-2xl font-semibold mb-4">Uploaded Screenshot</h2>
             <img
               src={`http://localhost:5000/${analysis.inputValue}`}
               alt="Uploaded screenshot"
               className="max-h-96 rounded-lg border"
             />
           </div>
-        ) : (
-          <p className="mb-2 break-all">
-            <span className="font-semibold">Input value:</span>{' '}
-            {analysis.inputValue}
+        )}
+
+        <div className="bg-white shadow rounded-xl p-6">
+          <h2 className="text-2xl font-semibold mb-4">Extracted Text</h2>
+          <p className="text-slate-700 whitespace-pre-wrap">
+            {analysis.extractedText || 'No text extracted.'}
           </p>
-        )}
+        </div>
 
-        <p className="mb-2">
-          <span className="font-semibold">Risk score:</span>{' '}
-          {analysis.riskScore}/100
-        </p>
-        <p>
-          <span className="font-semibold">Risk level:</span>{' '}
-          {analysis.riskLevel}
-        </p>
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Detected Patterns</h2>
+
+          {analysis.detections.length === 0 ? (
+            <EmptyState
+              title="No dark patterns detected"
+              description="The system did not identify suspicious patterns in this analysis."
+            />
+          ) : (
+            <div className="grid gap-4">
+              {analysis.detections.map((detection, index) => (
+                <DetectionCard key={index} detection={detection} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-
-      <div className="bg-white shadow rounded-xl p-6 mb-6">
-        <h2 className="text-2xl font-semibold mb-4">Extracted Text</h2>
-        <p className="text-slate-700 whitespace-pre-wrap">
-          {analysis.extractedText || 'No text extracted.'}
-        </p>
-      </div>
-
-      <div className="bg-white shadow rounded-xl p-6">
-        <h2 className="text-2xl font-semibold mb-4">Detected Patterns</h2>
-
-        {analysis.detections.length === 0 ? (
-          <p className="text-slate-600">No dark patterns detected.</p>
-        ) : (
-          <div className="space-y-4">
-            {analysis.detections.map((detection, index) => (
-              <div key={index} className="border rounded-lg p-4">
-                <p className="mb-1">
-                  <span className="font-semibold">Pattern type:</span>{' '}
-                  {formatPatternType(detection.patternType)}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Matched text:</span>{' '}
-                  {detection.matchedText}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Explanation:</span>{' '}
-                  {detection.explanation}
-                </p>
-                <p>
-                  <span className="font-semibold">Confidence:</span>{' '}
-                  {detection.confidence}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+    </PageContainer>
   )
 }
 

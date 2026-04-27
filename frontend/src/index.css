@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-slate-50 text-slate-900;
+  font-family: Arial, sans-serif;
+}
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -112,4 +120,4 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
-}
+} */
