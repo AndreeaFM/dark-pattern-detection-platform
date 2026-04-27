@@ -1,16 +1,14 @@
 const express = require('express')
 const router = express.Router()
+const authMiddleware = require('../middleware/authMiddleware')
+const {
+  analyzeUrl,
+  getHistory,
+  getAnalysisById,
+} = require('../controllers/analysisController')
 
-router.post('/url', (req, res) => {
-  res.send('Analyze URL route')
-})
-
-router.post('/screenshot', (req, res) => {
-  res.send('Analyze screenshot route')
-})
-
-router.get('/history', (req, res) => {
-  res.send('History route')
-})
+router.post('/url', authMiddleware, analyzeUrl)
+router.get('/history', authMiddleware, getHistory)
+router.get('/:id', authMiddleware, getAnalysisById)
 
 module.exports = router
