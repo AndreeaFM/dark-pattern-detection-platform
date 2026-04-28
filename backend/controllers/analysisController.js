@@ -4,6 +4,7 @@ const Tesseract = require('tesseract.js')
 const Analysis = require('../models/Analysis')
 const detectPatterns = require('../services/detectionService')
 const calculateRiskScore = require('../services/scoringService')
+const generateRecommendations = require('../services/recommendationService')
 
 exports.analyzeUrl = async (req, res) => {
   try {
@@ -15,6 +16,7 @@ exports.analyzeUrl = async (req, res) => {
 
     const response = await axios.get(url)
     const $ = cheerio.load(response.data)
+    const recommendations = generateRecommendations(detections)
 
     $('script, style, noscript').remove()
 
@@ -55,6 +57,7 @@ exports.analyzeScreenshot = async (req, res) => {
 
     const detections = detectPatterns(extractedText)
     const { score, riskLevel } = calculateRiskScore(detections)
+    const recommendations = generateRecommendations(detections)
 
     const analysis = await Analysis.create({
       userId: req.user.id,

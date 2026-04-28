@@ -55,6 +55,10 @@ const analysisSchema = new mongoose.Schema(
       enum: ['Low', 'Medium', 'High'],
       default: 'Low',
     },
+    recommendations: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

@@ -1,57 +1,84 @@
-const patternDictionary = {
+const patterns = {
   confirmshaming: [
     "no thanks, i don't want",
     'i prefer paying full price',
-    "no, i don't like saving money",
+    'no, i like paying more',
     "i don't want to save",
-    'no, i want to miss out',
+    'no thanks',
   ],
+
   urgency: [
     'limited time',
     'offer ends today',
-    'act now',
     'hurry',
-    'last chance',
+    'act now',
     'expires soon',
-    'only today',
+    'today only',
+    'last chance',
+    'ending soon',
   ],
+
   scarcity: [
     'only 1 left',
     'only 2 left',
     'few items remaining',
-    'almost sold out',
     'low stock',
+    'almost sold out',
     'selling fast',
-    'only a few left',
   ],
+
   forcedAction: [
     'sign up to continue',
     'create account to continue',
     'subscribe to continue',
     'start free trial',
-    'continue with subscription',
     'register to continue',
+    'continue with subscription',
   ],
 }
 
 const detectPatterns = (text) => {
+  const lower = text.toLowerCase()
   const detections = []
-  const normalizedText = text.toLowerCase()
 
-  for (const [patternType, keywords] of Object.entries(patternDictionary)) {
-    for (const keyword of keywords) {
-      if (normalizedText.includes(keyword)) {
-        detections.push({
-          patternType,
-          matchedText: keyword,
-          explanation: `The phrase "${keyword}" may indicate a ${patternType} dark pattern.`,
-          confidence: 0.85,
-        })
+  for (const [type, keywords] of Object.entries(patterns)) {
+    let foundMatches = []
+
+    keywords.forEach((keyword) => {
+      if (lower.includes(keyword)) {
+        foundMatches.push(keyword)
       }
+    })
+
+    if (foundMatches.length > 0) {
+      detections.push({
+        patternType: type,
+        matchedText: foundMatches.join(', '),
+        count: foundMatches.length,
+        confidence: getConfidence(foundMatches.length),
+        explanation: generateExplanation(type, foundMatches.length),
+      })
     }
   }
 
   return detections
+}
+
+function getConfidence(count) {
+  if (count >= 3) return 0.95
+  if (count === 2) return 0.88
+  return 0.8
+}
+
+function generateExplanation(type, count) {
+  const labels = {
+    confirmshaming: 'manipulative refusal wording',
+    urgency: 'time-pressure language',
+    scarcity: 'stock scarcity pressure',
+    forcedAction: 'forced registration/subscription behavior',
+  }
+
+  return `${count} signal(s) related to ${labels[type]} were detected.`
 }
 
 module.exports = detectPatterns

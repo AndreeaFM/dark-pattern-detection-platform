@@ -73,6 +73,34 @@ function Results() {
             </div>
           )}
         </div>
+        <div className="bg-white shadow rounded-xl p-6">
+          <h2 className="text-2xl font-semibold mb-4">
+            Ethical Recommendations
+          </h2>
+
+          {analysis.recommendations?.length === 0 ? (
+            <p>No recommendations generated.</p>
+          ) : (
+            <ul className="list-disc pl-6 space-y-2">
+              {analysis.recommendations.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="bg-white shadow rounded-xl p-6">
+          <h2 className="text-2xl font-semibold mb-4">Summary</h2>
+
+          <p>
+            The analyzed interface presents a{' '}
+            <strong>{analysis.riskLevel}</strong> manipulation risk score of{' '}
+            <strong>{analysis.riskScore}/100</strong>.
+          </p>
+
+          <p className="mt-2">
+            {analysis.detections.length} dark pattern category(s) were detected.
+          </p>
+        </div>
       </div>
     </PageContainer>
   )
